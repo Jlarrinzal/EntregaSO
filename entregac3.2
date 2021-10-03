@@ -1,0 +1,69 @@
+#include <mysql.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
+int main(int argc, char **argv)
+{
+	MYSQL *conn;
+	int err;
+	MYSQL_RES *resultado;
+	MYSQL_ROW row;
+	int fecha;
+	char nombre[20];
+	char password[20];
+	char consulta [80];
+	conn = mysql_init(NULL);
+	if (conn==NULL) {
+		printf ("Error al crear la conexiￃﾳn: %u %s\n", 
+				mysql_errno(conn), mysql_error(conn));
+		exit (1);
+	}
+	//inicializar la conexion
+	conn = mysql_real_connect (conn, "localhost","user", "pass", "personas",0, NULL, 0);
+	if (conn==NULL) {
+		printf ("Error al inicializar la conexiￃﾳn: %u %s\n", 
+				mysql_errno(conn), mysql_error(conn));
+		exit (1);
+	}
+	// consulta SQL para obtener una tabla con todos los datos
+	// de la base de datos
+	err=mysql_query (conn, "SELECT * FROM personas");
+	if (err!=0) {
+		printf ("Error al consultar datos de la base %u %s\n",
+				mysql_errno(conn), mysql_error(conn));
+		exit (1);
+	}
+	//recogemos el resultado de la consulta. El resultado de la
+	//consulta se devuelve en una variable del tipo puntero a
+	//MYSQL_RES tal y como hemos declarado anteriormente.
+	//Se trata de una tabla virtual en memoria que es la copia
+	//de la tabla real en disco.
+	resultado = mysql_store_result (conn);
+	// El resultado es una estructura matricial en memoria
+	// en la que cada fila contiene los datos de una persona.
+	
+	// Ahora obtenemos la primera fila que se almacena en una
+	// variable de tipo MYSQL_ROW
+	row = mysql_fetch_row (resultado);
+	if (row == NULL)
+		printf ("No se han obtenido datos en la consulta\n");
+	else
+		while (row !=NULL) {
+			puntos = atoi (row[2]);
+			printf ("Jugador: %s, puntos: %d\n", row[0], row[1]);
+			row = mysql_fetch_row (resultado);
+	}
+
+		//recogemos el resultado de la consulta 
+resultado = mysql_store_result (conn); 
+		row = mysql_fetch_row (resultado);
+		if (row == NULL)
+			printf ("No se han obtenido datos en la consulta\n");
+		else
+			// El resultado debe ser una matriz con una sola fila
+			// y una columna que contiene el nombre
+			printf ("Estos son el numero de partidas que ha ganado Juan con más de 30 puntos: %d\n", row[1] );
+		// cerrar la conexion con el servidor MYSQL 
+		mysql_close (conn);
+		exit(0);
+}
